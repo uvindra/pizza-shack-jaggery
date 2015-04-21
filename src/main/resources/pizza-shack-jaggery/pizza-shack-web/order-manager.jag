@@ -1,0 +1,36 @@
+<%
+var OrderManager = function() {
+    var webConfig = new (require("web-configuration.jag")).WebConfiguration();
+    this.config  = webConfig.getWebConfig();
+
+    this.PIZZA_ORDER_URL = "/1.0.0/order";
+    this.PIZZA_DELIVERY_URL = "/api/delivery";
+}
+
+OrderManager.prototype.saveOrder = function(address, pizzaType, quantity, customerName, creditCardNumber, token) {
+    var order = {
+        address : address,
+        pizzaType : pizzaType,
+        quantity : quantity,
+        customerName : customerName,
+        creditCardNumber : creditCardNumber,
+        isDelivered : false
+    }
+
+    var submitURL = this.config.serverURL + this.PIZZA_ORDER_URL;
+
+    var response = post(submitURL,order, "Bearer " + token, "application/json");
+
+    return response.data.order;
+}
+
+
+OrderManager.prototype.getOrder = function(orderId, token) {
+    var submitURL = this.config.serverURL + this.PIZZA_DELIVERY_URL + "/" + orderId;
+
+    var response = get(submitURL, null, "Bearer " + token, "application/json");
+
+    return response.data.order;
+}
+
+%>

@@ -1,0 +1,12 @@
+<%
+(function () {
+    var pizzaMenu = new (require("pizza-menu.jag")).PizzaMenu();
+
+    if (request.getMethod() == 'GET') {  // Get Menu
+        response.status = 200;
+        response.contentType ="application/json; charset=UTF-8";
+        response.content = pizzaMenu.getMenu();
+    }
+
+}());
+%>

@@ -1,0 +1,105 @@
+<%
+var PizzaMenu = function() {
+    if (this.getItemContainer() === undefined) {
+        this.setItemContainer(this.generateMenuItems());
+    }
+}
+
+PizzaMenu.prototype.getItemContainer = function() {
+    return application.get('menu');
+}
+
+PizzaMenu.prototype.setItemContainer = function(items) {
+    application.set('menu', items);
+}
+
+
+PizzaMenu.prototype.getMenu = function() {
+    return this.getItemContainer();
+}
+
+PizzaMenu.prototype.generateMenuItems = function() {
+    var items = [];
+
+    var item1 = new Object();
+    item1.name = "Chicken Parmesan";
+    item1.description = "Grilled chicken, fresh tomatoes, feta and mozzarella cheese";
+    item1.price = this.generatePrice();
+    item1.icon = "/images/1.png";
+    items.push(item1);
+
+    var item2 = new Object();
+    item2.name = "Spicy Italian";
+    item2.description = "Pepperoni and a double portion of spicy Italian sausage";
+    item2.price = this.generatePrice();
+    item2.icon = "/images/2.png";
+    items.push(item2);
+
+    var item3 = new Object();
+    item3.name = "Garden Fresh";
+    item3.description = "Slices onions and green peppers, gourmet " +
+    "mushrooms, black olives and ripe Roma tomatoes";
+    item3.price = this.generatePrice();
+    item3.icon = "/images/3.png";
+    items.push(item3);
+
+    var item4 = new Object();
+    item4.name = "Tuscan Six Cheese";
+    item4.description = "Six cheese blend of mozzarella, Parmesan, Romano, Asiago and Fontina";
+    item4.price = this.generatePrice();
+    item4.icon = "/images/4.png";
+    items.push(item4);
+
+    var item5 = new Object();
+    item5.name = "Spinach Alfredo";
+    item5.description = "Rich and creamy blend of spinach and garlic Parmesan with Alfredo sauce";
+    item5.price = this.generatePrice();
+    item5.icon = "/images/5.png";
+    items.push(item5);
+
+    var item6 = new Object();
+    item6.name = "BBQ Chicken Bacon";
+    item6.description = "Grilled white chicken, hickory-smoked bacon and fresh sliced onions in barbeque sauce";
+    item6.price = this.generatePrice();
+    item6.icon = "/images/6.png";
+    items.push(item6);
+
+    var item7 = new Object();
+    item7.name = "Hawaiian BBQ Chicken";
+    item7.description = "Grilled white chicken, hickory-smoked bacon, barbeque sauce topped with sweet pine-apple";
+    item7.price = this.generatePrice();
+    item7.icon = "/images/7.png";
+    items.push(item7);
+
+    var item8 = new Object();
+    item8.name = "Grilled Chicken Club";
+    item8.description = "Grilled white chicken, hickory-smoked bacon and fresh sliced onions topped with Roma tomatoes";
+    item8.price = this.generatePrice();
+    item8.icon = "/images/8.png";
+    items.push(item8);
+
+    var item9 = new Object();
+    item9.name = "Double Bacon 6Cheese";
+    item9.description = "Hickory-smoked bacon, Julienne cut Canadian bacon, Parmesan, " +
+    "mozzarella, Romano, Asiago and and Fontina cheese";
+    item9.price = this.generatePrice();
+    item9.icon = "/images/9.png";
+    items.push(item9);
+
+    var item10 = new Object();
+    item10.name = "Chilly Chicken Cordon Bleu";
+    item10.description = "Spinash Alfredo sauce topped with grilled chicken, ham, onions and " +
+    "mozzarella";
+    item10.price = this.generatePrice();
+    item10.icon = "/images/10.png";
+    items.push(item10);
+
+    return items;
+}
+
+PizzaMenu.prototype.generatePrice = function() {
+    return ((Math.random() + 20.00) - 0.01).toPrecision(4);
+}
+
+
+%>

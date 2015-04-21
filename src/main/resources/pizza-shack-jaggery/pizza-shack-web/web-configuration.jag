@@ -1,0 +1,29 @@
+<%
+var WebConfiguration = function() {
+    if (this.getWebConfig() === null) {
+        var content = this.readConfigFile();
+
+        var config = new XML(content);
+
+        application.put('web.config', config);
+    }
+}
+
+
+WebConfiguration.prototype.getWebConfig = function() {
+    return application.get('web.config');
+}
+
+
+WebConfiguration.prototype.readConfigFile = function() {
+    var path = "conf/web.xml";
+    var file = new File(path);
+    file.open("r");
+    var content = file.readAll();
+
+    file.close();
+
+    return content;
+}
+
+%>

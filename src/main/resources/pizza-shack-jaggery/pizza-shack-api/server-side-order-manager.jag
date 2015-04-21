@@ -1,0 +1,89 @@
+<%
+
+var OrderManager = function() {
+    var orders = this.getOrdersContainer();
+
+    if (orders === undefined) {
+        orders = {};
+        session.put('orders', orders);
+    }
+}
+
+OrderManager.prototype.placeOrder = function (order) {
+    var orderId = createGuid();
+
+    order.orderId = orderId;
+    this.getOrdersContainer()[orderId] = order;
+    return orderId;
+}
+
+OrderManager.prototype.getOrder = function(orderId) {
+    return this.getOrdersContainer()[orderId];
+}
+
+OrderManager.prototype.updateOrder =  function(orderId, order) {
+    if (this.getOrdersContainer()[orderId]) {
+        order.orderId = orderId;
+        this.updateOrdersContainer(order);
+        return true;
+    }
+
+    return false;
+}
+
+OrderManager.prototype.cancelOrder = function(orderId) {
+    if (this.getOrdersContainer()(orderId)) {
+        this.removeFromOrdersContainer(orderId);
+        return true;
+    }
+
+    return false;
+}
+
+OrderManager.prototype.listOrders = function() {
+    var orders = this.getOrdersContainer();
+
+    return JSON.parse(orders);
+}
+
+OrderManager.prototype.deliverOrder = function(orderId) {
+    var order = this.getOrdersContainer()[orderId];
+
+    if (order !== undefined) {
+        order.orderId = orderId;
+        order.isDelivered = true;
+        return true;
+    }
+
+    return false;
+}
+
+
+OrderManager.prototype.getOrdersContainer = function() {
+    return session.get('orders');
+}
+
+OrderManager.prototype.updateOrdersContainer = function(order) {
+    var orders = this.getOrdersContainer();
+    orders[order.orderId] = order;
+}
+
+
+OrderManager.prototype.removeFromOrdersContainer = function(orderId) {
+    var orders = this.getOrdersContainer();
+    delete orders[orderId];
+}
+
+function createGuid() {
+    var d = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random()*16)%16 | 0;
+        d = Math.floor(d/16);
+        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+}
+
+
+
+%>

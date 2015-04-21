@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<%
+	var token = session.getAttribute("access.token");
+
+    (function () {
+        if (token === undefined) {
+            response.sendRedirect("login.jag");
+            return;
+        }
+        session.setAttribute("cancel.order", "true");
+    }());
+%>
+<html lang="en">
+<head>
+    <% include("include_head.html"); %>
+</head>
+
+<body>
+
+
+<div class="container">
+    <% include("include_head_row.html"); %>
+
+
+    <div class="row">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container">
+
+                    <div class="nav-collapse">
+                        <ul class="nav">
+                            <li><a href="index.jag">Pizza</a></li>
+                            <li class="active"><a href="orders.jag">My Orders</a></li>
+                            <li><a href="logout.jag">Log Out</a></li>
+                        </ul>
+                    </div>
+                    <!-- /.nav-collapse -->
+                </div>
+            </div>
+            <!-- /navbar-inner -->
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row well">
+        <div class="span12">
+            <h1>My Orders</h1>
+        </div>
+        <div class="span10">
+
+            <form class="form-horizontal" action="orders.jag" method="POST">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label" for="quantity">Order Number</label>
+
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="quantity" name="orderId"/>
+
+                            <p class="help-block">Enter the order number provided during the order submission process.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Find order</button>
+                        <button type="button" class="btn" onclick="javascript:location.href='index.jag'">Cancel</button>
+                    </div>
+                </fieldset>
+            </form>
+            <%
+            	var orderId = request.getParameter("orderId");
+            	if (orderId !== undefined) {
+                    var manager = new (require("order-manager.jag")).OrderManager();
+            		var order = manager.getOrder(orderId, token);
+            		if (order !== null) {
+            %>
+            	<table class="table">
+            		
+            			<tr>
+            				<th>Order Id</th>
+            				<td><%=order.orderId%></td>
+            			</tr>
+            			<tr>
+            				<th>Pizza Type</th>
+            				<td><%=order.pizzaType%></td>
+            			</tr>
+            			<tr>
+            				<th>Quantity</th>
+            				<td><%=order.quantity></td>
+            			</tr>
+            			<tr>
+            				<th>Status</th>
+            				<td><%=order.isDelivered ? "Delivered" : "Pending"%></td>
+            			</tr>
+            		
+            	</table>
+            <%
+            		} else {
+            %>
+            <p>Invalid order ID</p>
+            <%			
+            		}
+            	}
+            %>
+        </div>
+    </div>
+
+</div>
+<!-- /container -->
+
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+<%
+var MenuItemManager = function() {
+    var webConfig = new (require("web-configuration.jag")).WebConfiguration();
+    this.config  = webConfig.getWebConfig();
+}
+
+MenuItemManager.prototype.getAvailablePizzaList = function(token) {
+
+    //return get(this.config.serverURL, {}, "Bearer " + token, "json");
+    //return get(this.config.serverURL, "Bearer " + token, "json");
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", String(this.config.serverURL));
+    xhr.setRequestHeader("Bearer" , token);
+    xhr.send();
+
+    return xhr.responseText;
+}
+
+%>

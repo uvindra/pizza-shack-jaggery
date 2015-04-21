@@ -1,0 +1,7 @@
+<config>
+	<display-name>Pizza Shack Client App</display-name>
+    <serverURL>http://localhost:8280/pizzashack</serverURL>
+    <loginURL>http://localhost:8280/token</loginURL>
+    <consumerKey>p51ZBFaY_GD955qMjqSah76Pa_ca</consumerKey>
+    <consumerSecret>1Y_K6Zr_bQq8MfDBa31odFTa0BEa</consumerSecret>
+</config>

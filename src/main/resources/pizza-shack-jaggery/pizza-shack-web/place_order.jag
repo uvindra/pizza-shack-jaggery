@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<%
+	var token = session.getAttribute("access.token");
+
+    (function () {
+        if (token === undefined || token === null) {
+            response.sendRedirect("login.jag");
+            return;
+        }
+    }());
+	
+	var submitted = request.getParameter("submitted");
+	if (submitted === true) {
+        var manager = new (require("order-manager.jag")).OrderManager();
+		var address = request.getParameter("bAddress");
+		var pizzaType = request.getParameter("pizzaType");
+		var quantity = request.getParameter("quantity");
+		var customer = request.getParameter("userName");
+		var card = request.getParameter("ccNumber");
+		var order = manager.saveOrder(address, pizzaType, quantity, customer, card, token);
+		response.sendRedirect("index.jag?orderId=" + order.orderId);
+	}
+        session.setAttribute("cancel.order", "true");
+
+%>
+<html lang="en">
+<head>
+    <% include("include_head.html"); %>
+</head>
+<script>
+
+</script>
+<body>
+
+
+<div class="container">
+    <% include("include_head_row.html"); %>
+
+
+    <div class="row">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container">
+
+                    <div class="nav-collapse">
+                        <ul class="nav">
+                            <li class="active"><a href="index.jag">Pizza</a></li>
+                            <li><a href="orders.jag">My Orders</a></li>
+                            <li><a href="logout.jag">Log Out</a></li>
+                        </ul>
+                    </div>
+                    <!-- /.nav-collapse -->
+                </div>
+            </div>
+            <!-- /navbar-inner -->
+        </div>
+    </div>
+
+    <div class="row well">
+        <div class="span12">
+            <h1>Place your order</h1>
+        </div>
+        <div class="span10">
+            <form class="form-horizontal" action="place_order.jag" method="POST">
+                <fieldset>
+                	<input type="hidden" name="submitted" value="true"/>
+                	<div class="control-group">
+                        <label class="control-label" for="quantity">Pizza Type</label>
+
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="quantity" 
+                            	name="pizzaType" value="<%=request.getParameter("type")%>" readonly="readonly"/>                            
+                        </div>
+                    </div>
+                
+                    <div class="control-group">
+                        <label class="control-label" for="quantity">Quantity</label>
+
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="quantity" name="quantity"/>
+
+                            <p class="help-block">Enter the number of pizzas.</p>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="userName">Your Name</label>
+
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="userName" name="userName"/>
+
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="ccNumber">Credit Card Number</label>
+
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="ccNumber" name="ccNumber"/>
+
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="bAddress">Billing Address</label>
+
+                        <div class="controls">
+                            <textarea class="input-xlarge" id="bAddress" name="bAddress"></textarea>
+                        </div>
+                    </div>
+
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Checkout</button>
+                        <button type="button" class="btn cancelBtn" onclick="javascript:location.href='index.jag'">Cancel</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+</div>
+<!-- /container -->
+
+
+</body>
+</html>

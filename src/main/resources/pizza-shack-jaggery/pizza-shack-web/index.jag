@@ -1,0 +1,182 @@
+<%
+var hasPizzaOrder = false;
+var token = null;
+
+(function () {
+    token = session.get("access.token");
+
+    var log = new Log();
+    log.debug("index.jag: Before token check");
+
+    if (token === null) {
+        log.debug("index.jag: token is null");
+        response.sendRedirect("pizza-shack-web/login.jag");
+        return;
+    }
+    else {
+        log.debug("index.jag: token not null");
+        var scope = session.get("scope");
+        for (var index = 0; index < scope.length; ++index) {
+            if ("order_pizza" === scope[index]) {
+                hasPizzaOrder = true;
+                break;
+            }
+        }
+    }
+}());
+%>
+
+<html lang="en">
+<head>
+    <% include("include_head.html"); %>
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache"><META HTTP-EQUIV="Expires" CONTENT="-1">
+    <script src="js/jquery-1.8.2.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script>
+
+    //This is the function that closes the pop-up
+    function endBlackout(){
+        $(".blackout").css("display", "none");
+        $(".msgbox").css("display", "none");
+    }
+
+    //This is the function that starts the pop-up
+    function strtBlackout(){
+        $(".msgbox").css("display", "block");
+        $(".blackout").css("display", "block");
+    }
+
+    function hide(){
+
+        if( "<%=hasPizzaOrder%>" =="true"){
+
+            $("#one").css ("display", "block");
+            $("#two").css ("display", "block");
+            $("#three").css ("display", "block");
+        }
+        else{
+            $("#two").css ("display", "none");
+            $("#three").css ("display", "none");
+
+            $(".orderBtn").removeAttr('href');
+            $(".orderBtn").removeClass("btn-primary");
+            $(".orderBtn").css("color","#bbbbbb");
+            $(".myOrders").removeAttr('href');
+            $(".myOrders").css("color", "#203737");
+
+            }
+    }
+
+    $(document).ready(function(){
+
+<%
+            var cancelOrder = session.get("cancel.order");
+            if (cancelOrder === undefined) {
+%>
+                strtBlackout();
+                hide();
+                $(".closeBox").click(endBlackout); // close if a close btn is clicked
+<%
+              }else{
+                session.remove("cancel.order");
+              }
+%>
+    });
+    </script>
+</head>
+
+<body>
+    <div class="blackout"></div>
+    <div class="msgbox col-sm-12">
+        <br /><br /><br />
+        <center>
+    <div class="messagePopup">
+        <div id="popupHeading" ><h2>This App will be able to</h2></div>
+        <br />
+        <ul class="options">
+            <div id="one"><li><p> View the menu on your behalf</p></div></li>
+            <div id="two"> <li><p> Make orders on your behalf</p></div></li>
+            <div id="three"><li><p> View order details on your behalf</p></div></li>
+        </ul>
+    </div>
+
+        <div class="closeBox">Authenticate</div>
+        <a href="logout.jag"><div class="decline">Decline</div></a>
+
+        </center>
+    </div>
+
+
+    <div class="container">
+        <% include("include_head_row.html"); %>
+
+        <div class="row">
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="container">
+
+                        <div class="nav-collapse">
+                            <ul class="nav">
+                                <li class="active"><a href="index.jag">Pizza</a></li>
+                                <li><a href="orders.jag" class="myOrders">My Orders</a></li>
+                                <li><a href="logout.jag">Log Out</a></li>
+                            </ul>
+                        </div>
+                        <!-- /.nav-collapse -->
+                    </div>
+                </div>
+                <!-- /navbar-inner -->
+            </div>
+        </div>
+    
+        <div class="row well">
+    	<%
+	    	var orderId = request.getParameter("orderId");
+	    	if (orderId !== null) {
+		    %>
+		    <div class="alert alert-success"><h3>Your last order has been submitted. Please note the order ID: <div style="color:#000"><%=orderId %></div></h3></div>	
+		    <%
+		    	}
+		    %>
+        <div class="span11">
+        	 
+            <h1>CHOOSE YOUR PIZZA</h1>
+                                  
+            <ul class="thumbnails">
+            <%
+                if (token !== null) {
+                    var manager = new (require("menu-item-manager.jag")).MenuItemManager();
+                    var menuItems = manager.getAvailablePizzaList(token);
+
+                    for (var item = 0; item < menuItems.length; ++item) {
+            %>
+
+            
+                <li class="span3">
+                    <div class="thumbnail">
+                        <img src="<%=request.getContextPath()%><%=menuItems[item].icon%>" alt="">
+
+                        <div class="caption">
+                            <h5><%=menuItems[item].name%></h5>
+
+                            <p><%=menuItems[item].description%></p>
+
+                            <p><a href="place_order.jag?type=<%=menuItems[item].name
+                    %>" class="btn btn-primary orderBtn">Order Now</a></p>
+                                            </div>
+                                        </div>
+                                    </li>
+
+                                <%
+                    }
+            	}
+            %>
+            </ul>
+        </div>
+    </div>
+    </div>
+    <!-- /container -->
+
+
+</body>
+</html>

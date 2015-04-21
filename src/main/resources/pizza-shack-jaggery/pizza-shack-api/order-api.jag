@@ -1,0 +1,52 @@
+<%
+(function () {
+    var orderManager = new (require("server-side-order-manager.jag")).OrderManager();
+
+    if (request.getMethod() == 'POST') {  // Place order
+        var order = request.getParameter("order");
+        var orderId = orderManager.placeOrder(order);
+
+        response.status = 201;
+        response.contentType ="text/plain; charset=UTF-8";
+        response.content = "order/" + orderId;
+    }
+    else if (request.getMethod() == 'GET') {  // Get Order
+        var orderId = request.getParameter("orderId");
+        var order = orderManager.getOrder(orderId);
+
+        if (order !== undefined) {
+            response.status = 200;
+            response.contentType ="application/json; charset=UTF-8";
+            response.content = order;
+        }
+        else {
+            response.status = 404;
+            response.contentType ="text/plain; charset=UTF-8";
+            response.content = "orderId " + orderId + " not found";
+        }
+    }
+    else if (request.getMethod() == 'DELETE') {  // Cancel Order
+        var orderId = request.getParameter("orderId");
+
+        if (orderManager.cancelOrder(orderId)) {
+            response.status = 200;
+        }
+        else {
+            response.status = 404;
+        }
+    }
+    else if (request.getMethod() == 'PUT') {  // Update Order
+        var orderId = request.getParameter("orderId");
+        var order = request.getParameter("order");
+
+        if (orderManager.updateOrder(orderId, order)) {
+            response.status = 200;
+        }
+        else {
+            response.status = 404;
+        }
+
+    }
+
+}());
+%>

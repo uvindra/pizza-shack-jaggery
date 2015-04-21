@@ -1,0 +1,29 @@
+<%
+(function () {
+    response.contentType ="application/json; charset=UTF-8";
+
+    var orderManager = new (require("server-side-order-manager.jag")).OrderManager();
+
+    if (request.getMethod() == 'GET') {
+        response.status = 200;
+        response.content = orderManager.listOrders();
+    }
+    else if (request.getMethod() == 'PUT') {
+        var orderId = request.getParameter("orderId");
+
+        var isDelivered = false;
+
+        if (orderId !== undefined) {
+            isDelivered = orderManager.deliverOrder(orderId);
+        }
+
+        if (isDelivered) {
+            response.status = 200;
+        }
+        else {
+            response.status = 403;
+        }
+    }
+
+}());
+%>

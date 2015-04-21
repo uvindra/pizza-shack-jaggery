@@ -1,0 +1,29 @@
+<%
+var TokenManager = function() {
+    var webConfig = new (require("web-configuration.jag")).WebConfiguration();
+    this.config  = webConfig.getWebConfig();
+
+    this.base64 = new (require("base64.jag")).Base64();
+}
+
+TokenManager.prototype.getToken = function(username, password, scopes) {
+    var loginURL = String(this.config.loginURL);
+    var consumerKey = this.config.consumerKey;
+    var consumerSecret = this.config.consumerSecret;
+
+    var applicationToken = consumerKey + ":" + consumerSecret;
+    applicationToken = "Basic " + this.base64.encode(applicationToken);
+
+    var payload = "grant_type=password&username="+username+"&password="+password+"&scope="+scopes;
+    //var response = post(submitURL,payload, applicationToken, "application/x-www-form-urlencoded; charset=UTF-8");
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", loginURL);
+    xhr.setRequestHeader("Bearer", String(this.base64.encode(applicationToken)));
+    xhr.send(payload);
+
+    //return response.data;
+    return xhr.responseText;
+}
+
+%>

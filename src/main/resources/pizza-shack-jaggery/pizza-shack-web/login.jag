@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<%
+    var log = new Log();
+    log.debug("login.jag");
+
+	var loginFailed = false;
+	var submitted = request.getParameter("submitted");
+	if (submitted !== undefined && submitted === "true") {
+        var manager = new (require("token-manager.jag")).TokenManager();
+		var username = request.getParameter("username");
+		var password = request.getParameter("password");
+		var token = manager.getToken(username, password, "order_pizza");
+		if (token != null) {
+            log.debug("token " + token);
+			session.put("access.token", token.accessToken());
+			session.put("scope", token.scopes());
+			response.sendRedirect("index.jag");
+			session.remove("cancel.order");
+		} else {
+			loginFailed = true;
+		}
+	}
+%>
+<html lang="en">
+<head>
+    <% include("include_head.html"); %>
+</head>
+
+<script>
+  function preventBack(){window.history.forward();}
+  setTimeout("preventBack()", 0);
+  window.onunload=function(){null};
+</script>
+
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="span12 pizza-logo">
+            <a href="index.jag"><img src="images/shack-logo.png"></a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container">
+
+                    <div class="nav-collapse">
+                        <ul class="nav">
+                        </ul>
+                    </div>
+                    <!-- /.nav-collapse -->
+                </div>
+            </div>
+            <!-- /navbar-inner -->
+        </div>
+    </div>
+
+    <div class="row well">
+        <div class="span12">
+            <h1>Login to Pizza Shack</h1>
+        </div>
+        <div class="span10">
+        <%
+        	if (loginFailed) {
+        %>
+        	<div class="alert alert-error">Authentication failed for user</div>
+        <%
+        	}
+        %>
+
+        <form class="form-horizontal" action="login.jag" method="POST">
+        <fieldset>
+        <input name="submitted" value="true" type="hidden"/>
+        <div class="control-group">
+            <label class="control-label" for="quantity">Username</label>
+
+            <div class="controls">
+            <input type="text" class="input-xlarge" id="username" name="username" />
+
+        </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="userName">Password</label>
+
+            <div class="controls">
+                <input type="password" class="input-xlarge" id="password" name="password"/>
+
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+        </fieldset>
+        </form>
+        </div>
+    </div>
+
+</div>
+<!-- /container -->
+
+</body>
+</html>
